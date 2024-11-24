@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ task.title }}</h1>
+<p>Тэги: {% for tag in task.tags.all %}
+<span class="tag"><strong>{{ tag.name }}</strong></span>
+{% endfor %}
+</p>
+<p><strong>Описание:</strong> {{ task.description }}</p>
+<p><strong>Статус:</strong> {{ task.get_status_display }}</p>
+<p><strong>Приоритет:</strong> {{ task.get_priority_display }}</p>
+<p><strong>Крайний срок:</strong> {{ task.due_date }}</p>
+<p><strong>Создатель:</strong> {{ task.creator.username }}</p>
+<p><strong>Исполнители:</strong>
+    {% for assignee in task.assignees.all %}
+        {{ assignee.username }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+        <em>Исполнители не назначены</em>
+    {% endfor %}
+</p>
+<h2>Результаты выполнения задания:</h2>
+{% if task.answers.all %}
+    <ul>
+        {% for answer in task.answers.all %}
+            <h3>Ответ на задание от сотрудника:</h3>
+            <li>
+                <strong>{{ answer.user.username }} ({{ answer.user.first_name }} {{ answer.user.last_name }}):</strong>
+                <p>{{ answer.comment }}</p>
+                {% if answer.file %}
+                    <p><a href="{{ answer.file.url }}">Скачать файл</a></p>
+                {% endif %}
+                <p>Дата: {{ answer.created_at }}</p>
+                {% if answer.comments.exists %}
+                {% for comment in answer.comments.all%}
+                <h4>Отзыв руководителя</h4>
+                <strong>{{ comment.manager.username }} ({{ comment.manager.first_name }} {{ comment.manager.last_name }}):</strong>
+                <p>{{ comment.text }}</p>
+                <p>Дата: {{ comment.created_at }}</p>
+                {%endfor%}
+                {%endif%}
+                <a href="{% url 'tasks:add_comment' task_answer_id=answer.id %}" class="btn btn-secondary">
+      Дать комментарий к ответу на задание
+    </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет ответов на эту задачу.</p>
+{% endif %}
+<a href="{% url 'tasks:add_answer' task.id %}" class="btn btn-secondary">Дать ответ на таску</a>
+<a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Назад к списку задач</a>
+{% if task.creator == request.user %}
+    <a href="{% url 'tasks:edit_task' task.id %}" class="btn btn-warning">Редактировать</a>
+    <form action="{% url 'tasks:delete_task' task.id %}" method="POST" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту задачу?');">Удалить</button>
+    </form>
+{% endif %}
+{% endblock %}

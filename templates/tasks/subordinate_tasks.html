@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Задачи {{ subordinate.username }} {% if subordinate.first_name %}({{subordinate.first_name}} {{subordinate.last_name}}) {{subordinate.email}}{%endif%}</h1>
+
+{% if tasks_with_answers %}
+    <ul>
+        {% for item in tasks_with_answers %}
+            <li>
+                <strong><a href="{% url 'tasks:task_detail' item.task.id %}" class="btn btn-sm btn-primary">{{ item.task.title }}</a></strong>
+                - Статус: {{ item.task.get_status_display }}
+                - Приоритет: {{ item.task.get_priority_display }}
+                {% if item.answer %}
+                    <div>
+                        <p><strong>Ответ подчиненного:</strong></p>
+                        <p>{{ item.answer.comment }}</p>
+                        {% if item.answer.file %}
+                            <p><a href="{{ item.answer.file.url }}">Скачать файл</a></p>
+                        {% endif %}
+                        <p>Дата ответа: {{ item.answer.created_at|date:"d.m.Y H:i" }}</p>
+                    </div>
+                {% else %}
+                    <p><em>Ответ отсутствует.</em></p>
+                {% endif %}
+                {% if item.answer.comments.exists %}
+                {% for comment in item.answer.comments.all%}
+                <h4>Вы дали комментарий, на ответ сотрудника</h4>
+                <strong>{{ comment.manager.username }} ({{ comment.manager.first_name }} {{ comment.manager.last_name }}):</strong>
+                <p>{{ comment.text }}</p>
+                <p>Дата: {{ comment.created_at }}</p>
+                {%endfor%}
+                {%else%}
+                {% if item.answer %}
+                <h4>Вы еще не просмотрели ответ сотрудника</h4>
+                {% endif%}
+                {%endif%}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>У этого подчиненного нет задач.</p>
+{% endif %}
+
+<a href="{% url 'users:profile' %}">Вернуться в личный кабинет</a>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<h1>Личный кабинет</h1>
+<h2>Личная информация</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <img src="{{ request.user.profile_image.url }}" alt="Изображение пользователя" class="img-fluid rounded-circle">
+    </div>
+    <div class="col-md-8">
+        <p><strong>Логин:</strong> {{ request.user.username }}</p>
+        <p><strong>Имя:</strong> {{ request.user.first_name }}</p>
+        <p><strong>Фамилия:</strong> {{ request.user.last_name }}</p>
+        <p><strong>Электронная почта:</strong> {{ request.user.email }}</p>
+    </div>
+</div>
+<section>
+    <h2>Начальники</h2>
+    {% if request.user.superiors.exists %}
+        <ul>
+            {% for superior in request.user.superiors.all %}
+                <li>{{ superior.username }} {% if superior.first_name %}({{ superior.first_name }} {{ superior.last_name }}){%endif%} {% if superior.email %}({{ superior.email }}){%endif%}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>У вас нет начальников.</p>
+    {% endif %}
+    <section>
+    <h2>Подчиненные</h2>
+    {% if request.user.subordinates.exists %}
+        <ul>
+            {% for subordinate in request.user.subordinates.all %}
+                <li><a href="{% url 'tasks:subordinate_tasks' subordinate.id %}">{{ subordinate.username }}</a> {% if subordinate.first_name %}({{ subordinate.first_name }} {{ subordinate.last_name }}){%endif%} {% if subordinate.email %}({{ subordinate.email }}){%endif%}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>У вас нет подчиненных.</p>
+    {% endif %}
+</section>
+</section>
+<h2>Задачи, в которых вы участвуете:</h2>
+
+{% if tasks %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Статус</th>
+                <th>Приоритет</th>
+                <th>Крайний срок</th>
+                <th>Роль</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td><a href="{% url 'tasks:task_detail' task.id %}">{{ task.title }}</a></td>
+                    <td>{{ task.description|truncatechars:50 }}</td>
+                    <td>{{ task.get_status_display }}</td>
+                    <td>{{ task.get_priority_display }}</td>
+                    <td>{{ task.due_date }}</td>
+                    <td>
+                        {% if task.creator == user %}
+                            <strong>Создатель</strong>
+                        {% else %}
+                            Исполнитель
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>У вас нет задач, в которых вы участвуете.</p>
+{% endif %}
+<h2>Изменить личную информацию</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mt-5">Добро пожаловать в Task Manager!</h1>
+    <p class="lead">Управляйте своими сотрудниками быстро и удобно.</p>
+    {% if not user.is_authenticated %}
+        <a href="{% url 'users:login' %}" class="btn btn-primary">Войти</a>
+        <a href="{% url 'users:register' %}" class="btn btn-secondary">Регистрация</a>
+    {% else %}
+        <a href="{% url 'users:profile' %}" class="btn btn-success">Личный кабинет</a>
+    {% endif %}
+
+</div>
+{% endblock %}

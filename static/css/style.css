@@ -1,0 +1,18 @@
+form {
+    margin-bottom: 20px;
+}
+
+fieldset {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 3px 8px;
+    margin: 0 5px;
+    font-size: 0.9em;
+    color: #333;
+}

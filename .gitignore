@@ -1,0 +1,4 @@
+/media/
+*/migrations/
+.idea/
+db.sqlite3

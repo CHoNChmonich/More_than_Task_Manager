@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Добавить комментарий к ответу</h2>
+  <p>Ответ работника на задачу: {{ task_answer.comment }} | {{ task_answer.file.url }}</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+  </form>
+  <a href="{% url 'tasks:task_detail' pk=task_answer.task.id %}">Назад к задаче</a>
+{% endblock %}
