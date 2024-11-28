@@ -10,6 +10,7 @@ from django.views import View
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
+
 # Create your views here.
 class UserLoginView(LoginView):
     template_name = 'users/login.html'
@@ -31,6 +32,7 @@ class UserLoginView(LoginView):
         messages.success(self.request, 'Вы успешно вошли в систему!')
         return super().form_valid(form)
 
+
 class UserRegisterView(View):
     template_name = 'users/register.html'
 
@@ -50,6 +52,7 @@ class UserRegisterView(View):
         else:
             messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
         return render(request, self.template_name, {'form': form})
+
 
 @method_decorator(login_required, name='dispatch')
 class ProfileView(View):
@@ -83,6 +86,7 @@ class ProfileView(View):
     def get_user_tasks(self, user):
         """Получает задачи, связанные с пользователем."""
         return Task.objects.filter(creator=user) | Task.objects.filter(assignees=user)
+
 
 @login_required
 def logout(request):

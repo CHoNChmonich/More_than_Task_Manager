@@ -91,6 +91,7 @@ class CreateOrEditTaskView(LoginRequiredMixin, FormView):
             return redirect('tasks:task_list')
         return super().dispatch(request, *args, **kwargs)
 
+
 class DeleteTaskView(View):
     """
     Представление для удаления задачи.
@@ -114,6 +115,7 @@ class DeleteTaskView(View):
         # Сообщаем об успешном удалении
         messages.success(request, "Задача успешно удалена.")
         return redirect('tasks:task_list')
+
 
 class TaskListView(ListView):
     model = Task
@@ -172,6 +174,7 @@ class TaskListView(ListView):
 
         return context
 
+
 class TaskDetailView(DetailView):
     """
     Класс представления для отображения подробной информации о задаче.
@@ -220,6 +223,7 @@ class AddAnswerView(LoginRequiredMixin, CreateView):
         # Указываем перенаправление на детальную страницу задачи
         return reverse_lazy('tasks:task_detail', kwargs={'pk': self.task.id})
 
+
 class AddCommentView(LoginRequiredMixin, CreateView):
     model = AnswerComment
     form_class = AnswerCommentForm
@@ -247,6 +251,7 @@ class AddCommentView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['task_answer'] = self.task_answer  # Передаем ответ в контекст
         return context
+
 
 @method_decorator(login_required, name='dispatch')
 class SubordinatesTasksView(ListView):

@@ -1,10 +1,12 @@
 from django import forms
 from .models import Task, TaskAnswer, AnswerComment, Tag
 
+
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date', 'status', 'priority', 'assignees', 'tags']  # Добавляем 'tags' к полям формы
+        fields = ['title', 'description', 'due_date', 'status', 'priority', 'assignees',
+                  'tags']  # Добавляем 'tags' к полям формы
 
     def __init__(self, *args, **kwargs):
         current_user = kwargs.pop('user', None)
@@ -17,6 +19,7 @@ class TaskForm(forms.ModelForm):
         # Устанавливаем queryset для тегов (если это необходимо)
         self.fields['tags'].queryset = Tag.objects.all()  # Здесь можно настроить ограничения, если нужно
 
+
 class TaskAnswerForm(forms.ModelForm):
     class Meta:
         model = TaskAnswer
@@ -24,6 +27,7 @@ class TaskAnswerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
 
 class AnswerCommentForm(forms.ModelForm):
     class Meta:
