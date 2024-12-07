@@ -2,6 +2,7 @@ from tasks.models import Task, Tag, TaskAnswer, AnswerComment
 from users.models import User
 from tasks.utils import q_search
 from .forms import TaskForm, AnswerCommentForm, TaskAnswerForm
+
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -36,7 +37,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class CreateOrEditTaskView(LoginRequiredMixin, FormView):
+class EditTaskView(LoginRequiredMixin, FormView):
     template_name = 'tasks/task_change.html'
     form_class = TaskForm
     success_url = reverse_lazy('tasks:task_list')
@@ -55,7 +56,7 @@ class CreateOrEditTaskView(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         """
-        Добавляем текущего пользователя и текущую задачу (если редактирование) в форму.
+        Добавляем текущую задачу (для редактирования) в форму.
         """
         kwargs = super().get_form_kwargs()
         task = self.get_task()
@@ -65,11 +66,10 @@ class CreateOrEditTaskView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         """
-        Сохраняет задачу с привязкой к текущему пользователю.
+        Сохраняет редактируемую задачу.
         """
-        new_task = form.save(commit=False)
-        new_task.creator = self.request.user
-        new_task.save()
+        task = form.save(commit=False)
+        task.save()  # Обновляем существующую задачу
         form.save_m2m()  # Сохраняем связи ManyToMany
         return super().form_valid(form)
 
@@ -79,7 +79,8 @@ class CreateOrEditTaskView(LoginRequiredMixin, FormView):
         """
         context = super().get_context_data(**kwargs)
         task = self.get_task()
-        context['title'] = 'Создание задачи' if not task else 'Редактирование задачи'
+        context['title'] = 'Редактирование задачи'
+        context['form'] = self.get_form()
         return context
 
     def dispatch(self, request, *args, **kwargs):
@@ -90,6 +91,7 @@ class CreateOrEditTaskView(LoginRequiredMixin, FormView):
         if self.kwargs.get('task_id') and not task:
             return redirect('tasks:task_list')
         return super().dispatch(request, *args, **kwargs)
+
 
 
 class DeleteTaskView(View):
