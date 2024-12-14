@@ -1,4 +1,5 @@
 from django.urls import path
+
 from tasks.views import TaskListView, TaskDetailView, EditTaskView, DeleteTaskView, TaskCreateView, \
     AddAnswerView, SubordinatesTasksView, AddCommentView
 

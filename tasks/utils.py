@@ -1,5 +1,4 @@
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
-from django.db.models import Q
 
 from tasks.models import Task
 

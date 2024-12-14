@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect
-from tasks.models import Task
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from users.forms import ProfileUpdateForm, UserRegistrationForm
 from django.contrib import messages, auth
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
+
+from tasks.models import Task
+from users.forms import ProfileUpdateForm, UserRegistrationForm
 
 
 # Create your views here.

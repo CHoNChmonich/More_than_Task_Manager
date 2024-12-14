@@ -1,8 +1,3 @@
-from tasks.models import Task, Tag, TaskAnswer, AnswerComment
-from users.models import User
-from tasks.utils import q_search
-from .forms import TaskForm, AnswerCommentForm, TaskAnswerForm
-
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,6 +8,11 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Q
+
+from tasks.models import Task, Tag, TaskAnswer, AnswerComment
+from users.models import User
+from tasks.utils import q_search
+from .forms import TaskForm, AnswerCommentForm, TaskAnswerForm
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
@@ -91,7 +91,6 @@ class EditTaskView(LoginRequiredMixin, FormView):
         if self.kwargs.get('task_id') and not task:
             return redirect('tasks:task_list')
         return super().dispatch(request, *args, **kwargs)
-
 
 
 class DeleteTaskView(View):
